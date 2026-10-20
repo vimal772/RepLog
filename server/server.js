@@ -2,6 +2,8 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 
+import router from './auth/signup.js';
+
 const app = express()
 const PORT = process.env.PORT || 3821
 
@@ -23,6 +25,8 @@ app.get('/api/health', (req, res) => {
         message: 'RepLog is running'
     })
 })
+
+app.use('/api/auth/signup', router)
 
 // Start the server
 app.listen(PORT, () => {
