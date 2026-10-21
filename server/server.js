@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 
 import router from './auth/signup.js';
+import { authMiddleware } from './middleware/authMiddleware.js';
 
 const app = express()
 const PORT = process.env.PORT || 3821
@@ -23,6 +24,13 @@ app.get('/api/health', (req, res) => {
     res.send({
         status: 'ok',
         message: 'RepLog is running'
+    })
+})
+
+app.get('/api/auth/me', authMiddleware, (req, res) => {
+    res.send({
+        status: 'ok',
+        message: 'Authorized'
     })
 })
 
