@@ -26,7 +26,7 @@ app.get('/api/health', (req, res) => {
     })
 })
 
-app.use('/api/auth/signup', router)
+app.use('/api/auth/', router)
 
 // Start the server
 app.listen(PORT, () => {
