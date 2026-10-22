@@ -120,9 +120,125 @@ workoutRoute.post("/", authMiddleware, async (req, res) => {
     };
 
     fileData.push(workout);
-    await writeJson(fileData, 'workouts')
+    await writeJson(fileData, "workouts");
 
     return res.status(201).json(workout);
+  } catch (v1) {
+    console.log("Invalid error occured in login " + v1);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
+workoutRoute.put("/:id", authMiddleware, async (req, res) => {
+  const workoutId = req.params.id;
+  if (!workoutId) {
+    return res.status(401).json({
+      message: "Invalid Workout Id",
+    });
+  }
+  const userId = req.user.id;
+  if (!userId) {
+    return res.status(401).json({
+      message: "unauthorized invalid token",
+    });
+  }
+
+  try {
+    const fileData = await readJson("workouts");
+    if (!Array.isArray(fileData)) {
+      return res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+
+    const workoutIndex = fileData.findIndex((obj) => {
+      return obj.id === workoutId;
+    });
+
+    if (workoutIndex === -1) {
+      return res.status(404).json({
+        message: "Workout does not exist for this id" + workoutId,
+      });
+    }
+    if (fileData[workoutIndex].userId !== userId) {
+      return res.status(403).json({
+        message: "Given workout id is not for authenticated user",
+      });
+    }
+
+    const { date, exercises, notes } = req.body || {};
+    const errors = validateWorkout({ date, exercises, notes });
+    if (errors.length > 0) {
+      return res.status(400).json({ message: "Validation failed", errors });
+    }
+
+    const updatedWorkout = {
+      createdAt: fileData[workoutIndex].createdAt,
+      userId: fileData[workoutIndex].userId,
+      id: fileData[workoutIndex].id,
+      date: date,
+      exercises: exercises.map(({ name, sets, reps, weight }) => ({
+        name: name.trim(),
+        sets,
+        reps,
+        weight,
+      })),
+      notes: notes?.trim(),
+    };
+    fileData[workoutIndex] = updatedWorkout;
+
+    await writeJson(fileData, "workouts");
+    return res.status(200).json(updatedWorkout);
+  } catch (v1) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
+workoutRoute.delete("/:id", authMiddleware, async (req, res) => {
+  const workoutId = req.params.id;
+  if (!workoutId) {
+    return res.status(400).json({
+      message: "Invalid Workout Id",
+    });
+  }
+  const userId = req.user.id;
+  if (!userId) {
+    return res.status(400).json({
+      message: "unauthorized invalid token",
+    });
+  }
+  try {
+    const fileData = await readJson("workouts");
+    if (!Array.isArray(fileData)) {
+      return res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+
+    const workoutIndex = fileData.findIndex((obj) => {
+      return obj.id === workoutId;
+    });
+
+    if (workoutIndex === -1) {
+      return res.status(404).json({
+        message: "Workout does not exist for this id" + workoutId,
+      });
+    }
+    if (fileData[workoutIndex].userId !== userId) {
+      return res.status(403).json({
+        message: "Given workout id is not for authenticated user",
+      });
+    }
+
+    fileData.splice(workoutIndex,1);
+    await writeJson(fileData, "workouts");
+    return res.status(200).json({
+        message: 'Workout deleted successfully'
+    });
   } catch (v1) {
     console.log("Invalid error occured in login " + v1);
     return res.status(500).json({
