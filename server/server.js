@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 
 import router from './auth/signup.js';
+import profileRouter from './routes/profile.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
 
 const app = express()
@@ -34,6 +35,8 @@ app.get('/api/auth/me', authMiddleware, (req, res) => {
     })
 })
 
+//roues
+app.use('/api/profile', profileRouter)
 app.use('/api/auth/', router)
 
 // Start the server
