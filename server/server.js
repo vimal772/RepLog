@@ -4,6 +4,7 @@ import cors from 'cors'
 
 import router from './auth/signup.js';
 import profileRouter from './routes/profile.js';
+import workoutRoute from './routes/workout.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
 
 const app = express()
@@ -38,6 +39,7 @@ app.get('/api/auth/me', authMiddleware, (req, res) => {
 //roues
 app.use('/api/profile', profileRouter)
 app.use('/api/auth/', router)
+app.use('/api/workouts', workoutRoute)
 
 // Start the server
 app.listen(PORT, () => {
