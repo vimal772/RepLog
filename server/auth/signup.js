@@ -48,7 +48,7 @@ async function addData(fileType, name, email, passwordHash) {
   await writeJson(fileData, fileType);
 }
 router.post("/signup", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password } = req.body || {};
 
   if (
     !name ||
