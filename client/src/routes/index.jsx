@@ -1,24 +1,17 @@
+
 import { createBrowserRouter } from "react-router";
+
+import RootLayout from "../layouts/RootLayout";
+import ProtectedRoute from "../components/ProtectedRoute";
+
 import Home from "../components/Home";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
-import RootLayout from "../layouts/RootLayout";
+
+// Add your other page imports here
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "test",
-        element: <h1>In Test Route</h1>,
-      },
-    ],
-  },
+  // Public routes
   {
     path: "/login",
     element: <Login />,
@@ -26,6 +19,31 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />,
+  },
+
+  // Protected routes
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/",
+        element: <RootLayout />,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: "profile",
+            element: <h1>Profile Page</h1>,
+          },
+          {
+            path: "workout",
+            element: <h1>Workout Page</h1>,
+          },
+        ],
+      },
+    ],
   },
 ]);
 
