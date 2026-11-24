@@ -1,4 +1,3 @@
-
 const BASE_URL = (
   import.meta.env.VITE_API_BASE_URL || "http://localhost:7702"
 ).replace(/\/+$/, "");
@@ -7,25 +6,19 @@ export async function apiRequest(
   endpoint,
   method = "GET",
   body = null,
-  customHeaders = {}
+  customHeaders = {},
 ) {
   const isAuthEndpoint =
     endpoint.startsWith("/api/auth/login") ||
     endpoint.startsWith("/api/auth/signup");
 
-  const token = isAuthEndpoint
-    ? null
-    : localStorage.getItem("token");
+  const token = isAuthEndpoint ? null : localStorage.getItem("token");
 
   const config = {
     method: method.toUpperCase(),
     headers: {
-      ...(body !== null
-        ? { "Content-Type": "application/json" }
-        : {}),
-      ...(token
-        ? { Authorization: `Bearer ${token}` }
-        : {}),
+      ...(body !== null ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...customHeaders,
     },
   };
@@ -44,17 +37,18 @@ export async function apiRequest(
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-      throw new Error(
-        data?.message || `Request failed: ${response.status}`
+      const error = new Error(
+        data?.message || `Request failed: ${response.status}`,
       );
+
+      error.status = response.status;
+
+      throw error;
     }
 
     return data;
   } catch (error) {
-    console.error(
-      `[API ${config.method} ${endpoint}] Failed:`,
-      error.message
-    );
+    console.error(`[API ${config.method} ${endpoint}] Failed:`, error.message);
 
     throw error;
   }
