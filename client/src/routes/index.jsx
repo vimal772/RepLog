@@ -8,6 +8,8 @@ import Home from "../components/Home";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 import Profile from "../components/Profile";
+import Workouts from "../components/Workouts";
+import Dashboard from '../components/Dashboard';
 
 // Add your other page imports here
 
@@ -32,16 +34,16 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Home />,
+            element: <Dashboard />,
           },
           {
             path: "profile",
             element: <Profile />,
           },
           {
-            path: "workout",
-            element: <h1>Workout Page</h1>,
-          },
+            path: "/workouts",
+            element: <Workouts />,
+          }
         ],
       },
     ],

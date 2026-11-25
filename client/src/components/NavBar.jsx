@@ -10,6 +10,11 @@ import {
 const NAV_ITEMS = [
   { name: "Dashboard", route: "/", icon: LayoutDashboard },
   { name: "Profile", route: "/profile", icon: User },
+  {
+    name: "Workouts",
+    route: "/workouts",
+    icon: Dumbbell,
+  }
 ];
 
 export default function Navbar() {
@@ -51,10 +56,9 @@ export default function Navbar() {
                   to={item.route}
                   end={item.route === "/"}
                   className={({ isActive }) =>
-                    `flex items-center gap-2 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "text-white"
-                        : "text-neutral-400 hover:text-white"
+                    `flex items-center gap-2 text-sm font-medium transition-colors ${isActive
+                      ? "text-white"
+                      : "text-neutral-400 hover:text-white"
                     }`
                   }
                 >
@@ -89,10 +93,9 @@ export default function Navbar() {
                 to={item.route}
                 end={item.route === "/"}
                 className={({ isActive }) =>
-                  `flex flex-col items-center gap-1 py-1 text-xs transition-colors ${
-                    isActive
-                      ? "text-emerald-500 font-semibold"
-                      : "text-neutral-400 hover:text-neutral-200"
+                  `flex flex-col items-center gap-1 py-1 text-xs transition-colors ${isActive
+                    ? "text-emerald-500 font-semibold"
+                    : "text-neutral-400 hover:text-neutral-200"
                   }`
                 }
               >
