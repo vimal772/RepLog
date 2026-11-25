@@ -5,6 +5,13 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const profileRouter = express.Router();
 const allowedSexValues = ["male", "female", "other"];
+// Verify these 4 exact string values against your assignment's Step 1/2
+const allowedWorkoutSplits = [
+  "push_pull_legs",
+  "upper_lower",
+  "full_body",
+  "bro_split",
+];
 
 profileRouter.get("/", authMiddleware, async (req, res) => {
   const userID = req.user.id;
@@ -47,7 +54,9 @@ profileRouter.get("/", authMiddleware, async (req, res) => {
 });
 
 profileRouter.put("/", authMiddleware, async (req, res) => {
-  const { age, sex, height, weight, targetWeight } = req.body;
+  // 1. Add workoutSplit to the destructuring
+  const { age, sex, height, weight, targetWeight, workoutSplit } = req.body;
+
   if (
     !Number.isFinite(age) ||
     !sex ||
@@ -59,6 +68,8 @@ profileRouter.put("/", authMiddleware, async (req, res) => {
     typeof weight !== "number" ||
     typeof targetWeight !== "number" ||
     typeof sex !== "string" ||
+    // 3. Validate that workoutSplit is a string (also catches missing/undefined)
+    typeof workoutSplit !== "string" ||
     // Age must be an integer from 16 to 100
     !Number.isInteger(age) ||
     age < 16 ||
@@ -68,7 +79,9 @@ profileRouter.put("/", authMiddleware, async (req, res) => {
     weight <= 0 ||
     targetWeight <= 0 ||
     // Sex must be one of your explicitly allowed values
-    !allowedSexValues.includes(sex.trim().toLowerCase())
+    !allowedSexValues.includes(sex.trim().toLowerCase()) ||
+    // 4. Check that workoutSplit exists in allowedWorkoutSplits
+    !allowedWorkoutSplits.includes(workoutSplit.trim().toLowerCase())
   ) {
     return res.status(400).json({
       message: "Invalid inputs. Please check all profile fields.",
@@ -101,13 +114,17 @@ profileRouter.put("/", authMiddleware, async (req, res) => {
         message: "user not found",
       });
     }
+
+    // 5. Add workoutSplit to newProfile object
     const newProfile = {
       age,
       sex: sex.trim().toLowerCase(),
       height,
       weight,
       targetWeight,
+      workoutSplit: workoutSplit.trim().toLowerCase(),
     };
+
     const updatedUser = {
       ...existingUser,
       profile: newProfile,
@@ -117,7 +134,7 @@ profileRouter.put("/", authMiddleware, async (req, res) => {
     await writeJson(fileData, "users");
     res.status(200).json({
       message: "profile added/updated successfully",
-      profile: newProfile
+      profile: newProfile,
     });
   } catch (v2) {
     console.log("Invalid error occured in login " + v2);
@@ -126,4 +143,5 @@ profileRouter.put("/", authMiddleware, async (req, res) => {
     });
   }
 });
+
 export default profileRouter;

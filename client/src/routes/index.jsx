@@ -7,6 +7,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Home from "../components/Home";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
+import Profile from "../components/Profile";
 
 // Add your other page imports here
 
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
           },
           {
             path: "profile",
-            element: <h1>Profile Page</h1>,
+            element: <Profile />,
           },
           {
             path: "workout",
